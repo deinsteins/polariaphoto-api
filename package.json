@@ -1,0 +1,28 @@
+{
+  "name": "polariaphoto-api-fastify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "deinstein",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/jwt": "^5.0.0",
+    "@prisma/client": "^4.15.0",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.1.4",
+    "fastify": "^4.17.0",
+    "fastify-auth": "^1.2.0",
+    "fastify-cors": "^6.1.0",
+    "fastify-jwt": "^4.2.0",
+    "jsonwebtoken": "^9.0.0",
+    "mysql": "^2.18.1",
+    "prisma": "^4.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
