@@ -17,9 +17,9 @@ model User {
   role     String
 }
 
-model Bundle {
+model Product {
   id       Int      @id @default(autoincrement())
   name     String   @unique
-  price    String
-  details  String
+  price    Decimal  @db.Decimal(10,2)
+  details  Json
 }

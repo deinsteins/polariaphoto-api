@@ -1,66 +1,73 @@
-const { createProduct, getProductById, getAllProducts, updateProduct, deleteProduct } = require('../models/productModel');
+const {
+  createProduct,
+  getProductById,
+  getAllProducts,
+  updateProduct,
+  deleteProduct,
+} = require('../models/productModel');
 
 // Create a new product
-async function addProduct(req, res) {
+async function addProductHandler(request, reply) {
   try {
-    const product = await createProduct(req.body);
-    res.status(201).json(product);
+    const { name, price, details } = request.body;
+    const product = await createProduct({ name, price, details });
+    reply.status(201).send(product);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    reply.status(500).send({ error: 'Internal server error' });
   }
 }
 
 // Get a product by ID
-async function getProduct(req, res) {
-  const { id } = req.params;
+async function getProductHandler(request, reply) {
+  const { id } = request.params;
   try {
     const product = await getProductById(Number(id));
     if (!product) {
-      res.status(404).json({ error: 'Product not found' });
+      reply.status(404).send({ error: 'Product not found' });
       return;
     }
-    res.json(product);
+    reply.send(product);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    reply.status(500).send({ error: 'Internal server error' });
   }
 }
 
 // Get all products
-async function getAllProducts(req, res) {
+async function getAllProductsHandler(request, reply) {
   try {
     const products = await getAllProducts();
-    res.json(products);
+    reply.send(products);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    reply.status(500).send({ error: 'Internal server error' });
   }
 }
 
 // Update a product
-async function updateProductById(req, res) {
-  const { id } = req.params;
+async function updateProductByIdHandler(request, reply) {
+  const { id } = request.params;
   try {
-    const product = await updateProduct(Number(id), req.body);
-    res.json(product);
+    const product = await updateProduct(Number(id), request.body);
+    reply.send(product);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    reply.status(500).send({ error: 'Internal server error' });
   }
 }
 
 // Delete a product
-async function deleteProductById(req, res) {
-  const { id } = req.params;
+async function deleteProductByIdHandler(request, reply) {
+  const { id } = request.params;
   try {
     await deleteProduct(Number(id));
-    res.json({ message: 'Product deleted successfully' });
+    reply.send({ message: 'Product deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    reply.status(500).send({ error: 'Internal server error' });
   }
 }
 
 module.exports = {
-  addProduct,
-  getProduct,
-  getAllProducts,
-  updateProductById,
-  deleteProductById,
+  addProductHandler,
+  getProductHandler,
+  getAllProductsHandler,
+  updateProductByIdHandler,
+  deleteProductByIdHandler,
 };

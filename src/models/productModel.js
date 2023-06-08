@@ -19,9 +19,13 @@ async function getAllProducts() {
 
 // Update a product
 async function updateProduct(id, data) {
-  return prisma.product.update({ where: { id }, data });
-}
+  const product = await prisma.product.update({
+    where: { id: Number(id) },
+    data,
+  });
 
+  return product;
+}
 // Delete a product
 async function deleteProduct(id) {
   return prisma.product.delete({ where: { id } });

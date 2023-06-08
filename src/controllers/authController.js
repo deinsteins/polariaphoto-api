@@ -2,12 +2,15 @@ const { createUser, getUserByEmail } = require("../models/userModel");
 const { hashPassword, comparePasswords } = require("../services/authService");
 const { generateToken } = require("../utils/jwtUtil");
 
-async function registerUser(email, password, phone, role) {
+async function registerHandler(request, reply) {
   try {
+    const { email, password, phone, role } = request.body;
+
     // Check if the user already exists
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
-      throw new Error("User already exists");
+      reply.code(400).send({ error: "User already exists" });
+      return;
     }
 
     // Hash the password
@@ -15,41 +18,44 @@ async function registerUser(email, password, phone, role) {
     const userRole = role? role : "user";
 
     // Create a new user
-    const newUser = await createUser({ email, password: hashedPassword, phone,  role: userRole});
+    const newUser = await createUser({ email, password: hashedPassword, phone, role: userRole });
 
     // Generate JWT token
     const token = generateToken({ email: newUser.email });
 
-    return token;
+    reply.send({ token });
   } catch (error) {
-    throw new Error("Registration failed");
+    console.log(error)
+
+    reply.code(500).send({ error: "Internal server error" });
   }
 }
 
-async function loginUser(email, password) {
+async function loginHandler(request, reply) {
   try {
+    const { email, password } = request.body;
+
     // Get the user by email
     const user = await getUserByEmail(email);
     if (!user) {
-      throw new Error("Invalid credentials");
+      reply.code(400).send({ error: "Invalid credentials" });
+      return;
     }
 
     // Compare passwords
     const passwordMatch = await comparePasswords(password, user.password);
     if (!passwordMatch) {
-      throw new Error("Invalid credentials");
+      reply.code(400).send({ error: "Invalid credentials" });
+      return;
     }
 
     // Generate JWT token
     const token = generateToken({ email });
 
-    return token;
+    reply.send({ token });
   } catch (error) {
-    throw new Error("Login failed");
+    reply.code(500).send({ error: "Internal server error" });
   }
 }
 
-module.exports = {
-  registerUser,
-  loginUser,
-};
+module.exports = { loginHandler, registerHandler };

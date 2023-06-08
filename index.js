@@ -2,6 +2,7 @@ const fastify = require("fastify")();
 const dotenv = require("dotenv");
 const authRoutes = require('./src/routes/authRoutes');
 const protectedRoutes = require('./src/routes/protectedRoutes');
+const productRoutes = require('./src/routes/productRoutes');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -9,7 +10,7 @@ dotenv.config();
 // Register routes
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);
-fastify.register
+fastify.register(productRoutes);
 fastify.get('*', (request, reply) => {
   reply.send({ message: '404 - Not Found' });
 });
