@@ -4,6 +4,7 @@ const {
   getAllProducts,
   updateProduct,
   deleteProduct,
+  createBooking
 } = require('../models/productModel');
 
 // Create a new product
@@ -64,10 +65,25 @@ async function deleteProductByIdHandler(request, reply) {
   }
 }
 
+async function createBookingHandler(request, reply) {
+  const { id } = request.params;
+  const { userId, bookingDate } = request.body;
+
+  try {
+    // Call the createBooking function to create a new booking
+    const booking = await createBooking(Number(id), userId, bookingDate);
+
+    reply.status(201).send(booking);
+  } catch (error) {
+    reply.status(500).send({ error: 'Internal server error' });
+  }
+}
+
 module.exports = {
   addProductHandler,
   getProductHandler,
   getAllProductsHandler,
   updateProductByIdHandler,
   deleteProductByIdHandler,
+  createBookingHandler
 };
