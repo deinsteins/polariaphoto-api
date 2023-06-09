@@ -1,9 +1,11 @@
 const fastifyJwt = require("fastify-jwt");
-const { getUserById } = require("../models/userModel");
+const crypto = require('crypto');
+
+const secretKey = crypto.randomBytes(32).toString('hex');
 
 module.exports = function (fastify, opts, done) {
   fastify.register(fastifyJwt, {
-    secret: "your-secret-key", // Replace with your own secret key
+    secret: secretKey, // Replace with your own secret key
   });
 
   fastify.decorate("authenticate", async (request, reply) => {
@@ -15,8 +17,6 @@ module.exports = function (fastify, opts, done) {
   });
 
   fastify.addHook("preHandler", fastify.authenticate);
-
-  // Rest of your code
 
   done();
 };

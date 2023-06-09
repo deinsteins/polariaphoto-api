@@ -14,7 +14,7 @@ async function addProductHandler(request, reply) {
     const product = await createProduct({ name, price, details });
     reply.status(201).send(product);
   } catch (error) {
-    reply.status(500).send({ error: 'Internal server error' });
+    reply.status(500).send({ error: error.meta.cause  });
   }
 }
 
@@ -29,7 +29,7 @@ async function getProductHandler(request, reply) {
     }
     reply.send(product);
   } catch (error) {
-    reply.status(500).send({ error: 'Internal server error' });
+    reply.status(500).send({ error: error.meta.cause });
   }
 }
 
@@ -39,7 +39,7 @@ async function getAllProductsHandler(request, reply) {
     const products = await getAllProducts();
     reply.send(products);
   } catch (error) {
-    reply.status(500).send({ error: 'Internal server error' });
+    reply.status(500).send({ error: error.meta.cause });
   }
 }
 
@@ -50,7 +50,7 @@ async function updateProductByIdHandler(request, reply) {
     const product = await updateProduct(Number(id), request.body);
     reply.send(product);
   } catch (error) {
-    reply.status(500).send({ error: 'Internal server error' });
+    reply.status(500).send({ error: error.meta.cause });
   }
 }
 
@@ -61,7 +61,7 @@ async function deleteProductByIdHandler(request, reply) {
     await deleteProduct(Number(id));
     reply.send({ message: 'Product deleted successfully' });
   } catch (error) {
-    reply.status(500).send({ error: 'Internal server error' });
+    reply.status(500).send({ error: error.meta.cause });
   }
 }
 
@@ -75,7 +75,7 @@ async function createBookingHandler(request, reply) {
 
     reply.status(201).send(booking);
   } catch (error) {
-    reply.status(500).send({ error: 'Internal server error' });
+    reply.status(500).send({ error: error.meta.cause });
   }
 }
 

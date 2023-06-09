@@ -22,4 +22,9 @@ module.exports = {
   deleteUser: async (id) => {
     return prisma.user.delete({ where: { id } });
   },
+
+  getAllUsers: async () => {
+    return prisma.user.findMany();
+  },
+  
 };

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const secretKey = "your-secret-key"; // Replace with your own secret key
+const secretKey = process.env.SECRETKEY; // Replace with your own secret key
 
 module.exports = {
   generateToken: (payload) => {

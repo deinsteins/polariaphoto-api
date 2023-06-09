@@ -27,7 +27,7 @@ async function registerHandler(request, reply) {
   } catch (error) {
     console.log(error)
 
-    reply.code(500).send({ error: "Internal server error" });
+    reply.code(500).send({ error: error.meta.cause });
   }
 }
 
@@ -50,11 +50,11 @@ async function loginHandler(request, reply) {
     }
 
     // Generate JWT token
-    const token = generateToken({ email });
+    const token = generateToken(user.email);
 
     reply.send({ token });
   } catch (error) {
-    reply.code(500).send({ error: "Internal server error" });
+    reply.code(500).send({ error: error.meta.cause });
   }
 }
 
