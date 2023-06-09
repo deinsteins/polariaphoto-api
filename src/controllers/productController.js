@@ -4,11 +4,15 @@ const {
   getAllProducts,
   updateProduct,
   deleteProduct,
-  createBooking
 } = require('../models/productModel');
 
 // Create a new product
 async function addProductHandler(request, reply) {
+  const { role } = request.user;
+  if (role !== "admin") {
+    reply.code(403).send({ error: "Access denied" });
+    return;
+  }
   try {
     const { name, price, details } = request.body;
     const product = await createProduct({ name, price, details });
@@ -45,6 +49,11 @@ async function getAllProductsHandler(request, reply) {
 
 // Update a product
 async function updateProductByIdHandler(request, reply) {
+  const { role } = request.user;
+  if (role !== "admin") {
+    reply.code(403).send({ error: "Access denied" });
+    return;
+  }
   const { id } = request.params;
   try {
     const product = await updateProduct(Number(id), request.body);
@@ -56,24 +65,15 @@ async function updateProductByIdHandler(request, reply) {
 
 // Delete a product
 async function deleteProductByIdHandler(request, reply) {
+  const { role } = request.user;
+  if (role !== "admin") {
+    reply.code(403).send({ error: "Access denied" });
+    return;
+  }
   const { id } = request.params;
   try {
     await deleteProduct(Number(id));
     reply.send({ message: 'Product deleted successfully' });
-  } catch (error) {
-    reply.status(500).send({ error: error.meta.cause });
-  }
-}
-
-async function createBookingHandler(request, reply) {
-  const { id } = request.params;
-  const { userId, bookingDate } = request.body;
-
-  try {
-    // Call the createBooking function to create a new booking
-    const booking = await createBooking(Number(id), userId, bookingDate);
-
-    reply.status(201).send(booking);
   } catch (error) {
     reply.status(500).send({ error: error.meta.cause });
   }
@@ -85,5 +85,4 @@ module.exports = {
   getAllProductsHandler,
   updateProductByIdHandler,
   deleteProductByIdHandler,
-  createBookingHandler
 };

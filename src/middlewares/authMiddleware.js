@@ -9,9 +9,9 @@ module.exports =
       // Verify the JWT token
       const decodedToken = await verifyToken(token);
       // Get the user ID from the token payload
-      const id = decodedToken;
+      const email = decodedToken;
       // Get the user by ID from the database
-      const user = await getUserByEmail(id);
+      const user = await getUserByEmail(email);
       request.user = user;
     } catch (error) {
       reply.code(401).send({ error: "Unauthorized" });

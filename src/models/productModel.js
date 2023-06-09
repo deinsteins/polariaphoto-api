@@ -31,23 +31,10 @@ async function deleteProduct(id) {
   return prisma.product.delete({ where: { id } });
 }
 
-async function createBooking(productId, userId, bookingDate) {
-  const booking = await prisma.booking.create({
-    data: {
-      product: { connect: { id: productId } },
-      user: { connect: { id: userId } },
-      bookingDate: bookingDate,
-    },
-  });
-
-  return booking;
-}
-
 module.exports = {
   createProduct,
   getProductById,
   getAllProducts,
   updateProduct,
   deleteProduct,
-  createBooking
 };
