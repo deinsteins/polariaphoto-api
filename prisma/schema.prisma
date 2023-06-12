@@ -27,10 +27,20 @@ model Product {
 }
 
 model Booking {
-  id          Int      @id @default(autoincrement())
-  bookingDate DateTime
-  product     Product  @relation(fields: [productId], references: [id])
-  user        User     @relation(fields: [userId], references: [id])
-  productId   Int
-  userId      Int
+  id             Int             @id @default(autoincrement())
+  bookingDate    DateTime
+  paymentStatus  String?
+  product        Product         @relation(fields: [productId], references: [id])
+  user           User            @relation(fields: [userId], references: [id])
+  productId      Int
+  userId         Int
+  proofOfPayment String?
+  ProofOfPayment ProofOfPayment?
+}
+
+model ProofOfPayment {
+  id        Int     @id @default(autoincrement())
+  image     String  @db.VarChar(255)
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  bookingId Int     @unique
 }

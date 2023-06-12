@@ -8,6 +8,8 @@ const bookingRoutes = require("./src/routes/bookingRoutes");
 // Load environment variables from .env file
 dotenv.config();
 
+fastify.register(require('fastify-multipart'), { attachFieldsToBody: 'keyValues' });
+
 // Register routes
 fastify.register(authRoutes);
 fastify.register(adminRoutes);

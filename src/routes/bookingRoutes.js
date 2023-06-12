@@ -1,5 +1,5 @@
 const authenticate = require('../middlewares/authMiddleware');
-const { createBookingHandler, getAllBookingsHandler, updateBookingByIdHandler, deleteBookingByIdHandler, getBookingByIdHandler } = require('../controllers/bookingController');
+const { createBookingHandler, getAllBookingsHandler, updateBookingByIdHandler, deleteBookingByIdHandler, getBookingByIdHandler, uploadProofOfPaymentHandler } = require('../controllers/bookingController');
 
 module.exports = function (fastify, opts, done) {
     fastify.post("/products/:id/book", { preHandler: authenticate}, (request, reply) => {
@@ -16,6 +16,10 @@ module.exports = function (fastify, opts, done) {
 
     fastify.put("/book/:id", { preHandler: authenticate}, (request, reply) => {
         updateBookingByIdHandler(request, reply);
+    });
+
+    fastify.put('/book/:id/upload', { preHandler: authenticate }, (request, reply) => {
+        uploadProofOfPaymentHandler(request, reply);
     });
 
     fastify.delete("/book/:id", { preHandler: authenticate}, (request, reply) => {

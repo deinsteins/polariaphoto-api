@@ -6,19 +6,72 @@ const {
     getBookingById,
 
   } = require('../models/bookingModel');
+
+  const fs = require('fs')
+  const { createReadStream, createWriteStream } = require('fs');
+  const { v4: uuidv4 } = require('uuid');
+  const { createClient } = require('@supabase/supabase-js');
+
+  // Initialize Supabase client
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
   
   async function createBookingHandler(request, reply) {
     const { id } = request.params;
     const { id: userId } = request.user;
-    const { bookingDate } = request.body;
+    const { bookingDate, paymentStatus, proofOfPayment } = request.body;
   
     try {
       // Call the createBooking function to create a new booking
-      const booking = await createBooking(Number(id), userId, bookingDate);
+      const booking = await createBooking(Number(id), userId, bookingDate, proofOfPayment, paymentStatus);
   
       reply.status(201).send(booking);
     } catch (error) {
-      reply.status(500).send({ error: error.meta.cause });
+      reply.status(500).send({ error: error.message });
+    }
+  }
+
+  async function uploadProofOfPaymentHandler(request, reply) {
+    const { id } = request.params; // Booking ID
+    const proofOfPayment = await request.file();
+    // console.log(proofOfPayment)
+  
+    try {
+      // Generate a unique filename for the proof of payment image
+      const filename = `${uuidv4()}.${proofOfPayment.filename.split('.').pop()}`;
+
+      // Create a writable stream to store the file locally
+      const storedFile = createWriteStream(`./public/images/${filename}`);
+
+      // Pipe the proof of payment file stream to the stored file stream
+      proofOfPayment.file.pipe(storedFile);
+
+      // Wait for the file to finish writing
+      await new Promise((resolve, reject) => {
+        storedFile.on('finish', resolve);
+        storedFile.on('error', reject);
+      });
+
+      const file = createReadStream(`./public/images/${filename}`);
+
+      // Upload proof of payment image to Supabase Storage
+      const { data, error } = await supabase.storage
+      .from('polariaphoto')
+      .upload(`proof_of_payment/${filename}`, file, {
+        contentType: proofOfPayment.mimetype,
+        duplex: "half"
+      });
+      if (error) {
+        throw new Error('Failed to upload proof of payment');
+      }
+  
+      // Get the URL of the uploaded image
+      const proofOfPaymentUrl = supabase.storage.from('polariaphoto').getPublicUrl(`proof_of_payment/${filename}`);
+  
+      // Update the booking with the proof of payment URL
+      const updatedBooking = await updateBooking(Number(id), { proofOfPayment: proofOfPaymentUrl.data.publicUrl });
+      reply.status(201).send(updatedBooking);
+    } catch (error) {
+      reply.status(500).send({ error: error.message });
     }
   }
 
@@ -84,6 +137,7 @@ async function getAllBookingsHandler(request, reply) {
     getAllBookingsHandler,
     getBookingByIdHandler,
     updateBookingByIdHandler,
-    deleteBookingByIdHandler
+    deleteBookingByIdHandler,
+    uploadProofOfPaymentHandler
   };
   
