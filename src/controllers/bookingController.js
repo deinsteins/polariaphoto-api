@@ -111,8 +111,15 @@ async function getAllBookingsHandler(request, reply) {
   // Update a Booking
   async function updateBookingByIdHandler(request, reply) {
     const { id } = request.params;
- 
+    const { role } = request.user;
+    const { paymentStatus } = request.body;
+    
     try {
+      if (paymentStatus && role !== "admin") {
+        reply.code(403).send({ error: "Access denied" });
+        return;
+      }
+    
       const booking = await updateBooking(Number(id), request.body);
       reply.send(booking);
     } catch (error) {
