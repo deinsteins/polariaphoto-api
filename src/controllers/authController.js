@@ -4,7 +4,7 @@ const { generateToken } = require("../utils/jwtUtil");
 
 async function registerHandler(request, reply) {
   try {
-    const { email, password, phone, role } = request.body;
+    const { email, password, name, phone, role } = request.body;
 
     // Check if the user already exists
     const existingUser = await getUserByEmail(email);
@@ -18,7 +18,7 @@ async function registerHandler(request, reply) {
     const userRole = role? role : "user";
 
     // Create a new user
-    const newUser = await createUser({ email, password: hashedPassword, phone, role: userRole });
+    const newUser = await createUser({ email, password: hashedPassword, name, phone, role: userRole });
 
     // Generate JWT token
     const token = generateToken({ email: newUser.email });
