@@ -2,19 +2,25 @@ const fastifyJwt = require("fastify-jwt");
 const { getUserById, getUserByEmail } = require("../models/userModel");
 const { verifyToken } = require("../utils/jwtUtil");
 
-module.exports = 
-  async function authenticate(request, reply) {
-    try {
-      const token = request.headers.authorization;
-      // Verify the JWT token
-      const decodedToken = await verifyToken(token);
-      // Get the user ID from the token payload
+module.exports = async function authenticate(request, reply) {
+  try {
+    const token = request.headers.authorization;
+
+    // Periksa apakah token diawali dengan "Bearer "
+    if (token && token.startsWith("Bearer ")) {
+      // Ambil hanya nilai token setelah "Bearer "
+      const tokenValue = token.substring(7);
+      // Verifikasi token JWT
+      const decodedToken = await verifyToken(tokenValue);
+      // Ambil email dari payload token
       const email = decodedToken;
-      // Get the user by ID from the database
+      // Dapatkan pengguna berdasarkan email dari database
       const user = await getUserByEmail(email);
       request.user = user;
-    } catch (error) {
-      reply.code(401).send({ error: "Unauthorized" });
+    } else {
+      throw new Error("Invalid token format");
     }
+  } catch (error) {
+    reply.code(401).send({ error: "Unauthorized" });
   }
-
+};

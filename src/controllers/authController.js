@@ -26,8 +26,7 @@ async function registerHandler(request, reply) {
     reply.send({ token });
   } catch (error) {
     console.log(error)
-
-    reply.code(500).send({ error: error.meta.cause });
+    reply.code(500).send({ error: error.message});
   }
 }
 
