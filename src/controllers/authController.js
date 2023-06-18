@@ -15,18 +15,24 @@ async function registerHandler(request, reply) {
 
     // Hash the password
     const hashedPassword = await hashPassword(password);
-    const userRole = role? role : "user";
+    const userRole = role ? role : "user";
 
     // Create a new user
-    const newUser = await createUser({ email, password: hashedPassword, name, phone, role: userRole });
+    const newUser = await createUser({
+      email,
+      password: hashedPassword,
+      name,
+      phone,
+      role: userRole,
+    });
 
     // Generate JWT token
     const token = generateToken({ email: newUser.email });
 
     reply.send({ token });
   } catch (error) {
-    console.log(error)
-    reply.code(500).send({ error: error.message});
+    console.log(error);
+    reply.code(500).send({ error: error.message });
   }
 }
 
