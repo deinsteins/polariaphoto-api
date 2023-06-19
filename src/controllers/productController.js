@@ -4,7 +4,7 @@ const {
   getAllProducts,
   updateProduct,
   deleteProduct,
-} = require('../models/productModel');
+} = require("../models/productModel");
 
 // Create a new product
 async function addProductHandler(request, reply) {
@@ -18,7 +18,7 @@ async function addProductHandler(request, reply) {
     const product = await createProduct({ name, price, details });
     reply.status(201).send(product);
   } catch (error) {
-    reply.status(500).send({ error: error.meta.cause  });
+    reply.status(500).send({ error: error.meta.cause });
   }
 }
 
@@ -28,7 +28,7 @@ async function getProductHandler(request, reply) {
   try {
     const product = await getProductById(Number(id));
     if (!product) {
-      reply.status(404).send({ error: 'Product not found' });
+      reply.status(404).send({ error: "Product not found" });
       return;
     }
     reply.send(product);
@@ -59,7 +59,7 @@ async function updateProductByIdHandler(request, reply) {
     const product = await updateProduct(Number(id), request.body);
     reply.send(product);
   } catch (error) {
-    reply.status(500).send({ error: error.meta.cause });
+    reply.status(500).send({ error: error.message });
   }
 }
 
@@ -73,8 +73,9 @@ async function deleteProductByIdHandler(request, reply) {
   const { id } = request.params;
   try {
     await deleteProduct(Number(id));
-    reply.send({ message: 'Product deleted successfully' });
+    reply.send({ message: "Product deleted successfully" });
   } catch (error) {
+    console.log(error);
     reply.status(500).send({ error: error.meta.cause });
   }
 }

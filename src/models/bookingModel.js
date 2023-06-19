@@ -1,8 +1,47 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-async function createBooking(productId, userId, bookingDate, proofOfPayment, paymentStatus) {
+// Fungsi untuk menghitung jumlah booking berdasarkan tanggal booking
+async function getBookingsCountByDate(bookingDate) {
+  const bookingsCount = await prisma.booking.count({
+    where: {
+      bookingDate: bookingDate,
+    },
+  });
+
+  return bookingsCount;
+}
+
+async function createBooking(
+  productId,
+  userId,
+  bookingDate,
+  proofOfPayment,
+  paymentStatus,
+  status,
+  location
+) {
+  // Mengambil informasi nama pengguna (user name)
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      name: true,
+    },
+  });
+
+  // Mengambil informasi nama produk (product name)
+  const product = await prisma.product.findUnique({
+    where: {
+      id: productId,
+    },
+    select: {
+      name: true,
+    },
+  });
+
   const booking = await prisma.booking.create({
     data: {
       product: { connect: { id: productId } },
@@ -10,6 +49,10 @@ async function createBooking(productId, userId, bookingDate, proofOfPayment, pay
       bookingDate: bookingDate,
       proofOfPayment: proofOfPayment,
       paymentStatus: paymentStatus,
+      status: status,
+      location: location,
+      userName: user.name, // Menyimpan user name
+      productName: product.name, // Menyimpan product name
     },
   });
 
@@ -17,19 +60,19 @@ async function createBooking(productId, userId, bookingDate, proofOfPayment, pay
 }
 
 async function getBookingById(id) {
-    return prisma.booking.findUnique({ where: { id } });
+  return prisma.booking.findUnique({ where: { id } });
 }
 
 async function getAllBookings() {
-    return prisma.booking.findMany();
-  }
+  return prisma.booking.findMany();
+}
 
 async function updateBooking(id, data) {
-    return prisma.booking.update({ where: { id }, data });
+  return prisma.booking.update({ where: { id }, data });
 }
 
 async function deleteBooking(id) {
-    return prisma.booking.delete({ where: { id } });
+  return prisma.booking.delete({ where: { id } });
 }
 
 module.exports = {
@@ -38,4 +81,5 @@ module.exports = {
   updateBooking,
   deleteBooking,
   getAllBookings,
+  getBookingsCountByDate,
 };

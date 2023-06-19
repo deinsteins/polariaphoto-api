@@ -57,7 +57,7 @@ async function loginHandler(request, reply) {
     // Generate JWT token
     const token = generateToken(user.email);
 
-    reply.send({ token });
+    reply.send({ token, role: user.role });
   } catch (error) {
     reply.code(500).send({ error: error.meta.cause });
   }

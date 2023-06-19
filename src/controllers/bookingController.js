@@ -4,6 +4,7 @@ const {
   updateBooking,
   deleteBooking,
   getBookingById,
+  getBookingsCountByDate,
 } = require("../models/bookingModel");
 
 const fs = require("fs");
@@ -20,16 +21,30 @@ const supabase = createClient(
 async function createBookingHandler(request, reply) {
   const { id } = request.params;
   const { id: userId } = request.user;
-  const { bookingDate, paymentStatus, proofOfPayment } = request.body;
+  const { bookingDate, paymentStatus, proofOfPayment, location, status } =
+    request.body;
 
   try {
+    // Check the existing number of bookings for the given bookingDate
+    const existingBookingsCount = await getBookingsCountByDate(bookingDate);
+
+    if (existingBookingsCount >= 2) {
+      reply.status(400).send({
+        error:
+          "Jumlah booking sudah mencapai batas maksimal untuk tanggal tersebut",
+      });
+      return;
+    }
+
     // Call the createBooking function to create a new booking
     const booking = await createBooking(
       Number(id),
       userId,
       bookingDate,
       proofOfPayment,
-      paymentStatus
+      paymentStatus,
+      status,
+      location
     );
 
     reply.status(201).send(booking);
