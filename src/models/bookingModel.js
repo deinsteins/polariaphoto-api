@@ -51,8 +51,8 @@ async function createBooking(
       paymentStatus: paymentStatus,
       status: status,
       location: location,
-      userName: user.name, // Menyimpan user name
-      productName: product.name, // Menyimpan product name
+      userName: user.name,
+      productName: product.name,
     },
   });
 
@@ -61,6 +61,14 @@ async function createBooking(
 
 async function getBookingById(id) {
   return prisma.booking.findUnique({ where: { id } });
+}
+
+async function getBookingsByUserId(userId) {
+  return prisma.booking.findMany({
+    where: {
+      userId: userId,
+    },
+  });
 }
 
 async function getAllBookings() {
@@ -82,4 +90,5 @@ module.exports = {
   deleteBooking,
   getAllBookings,
   getBookingsCountByDate,
+  getBookingsByUserId,
 };

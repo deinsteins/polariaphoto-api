@@ -5,6 +5,7 @@ const {
   deleteBooking,
   getBookingById,
   getBookingsCountByDate,
+  getBookingsByUserId,
 } = require("../models/bookingModel");
 
 const fs = require("fs");
@@ -165,6 +166,17 @@ async function deleteBookingByIdHandler(request, reply) {
   }
 }
 
+async function getBookingsByUserIdHandler(request, reply) {
+  const { userId } = request.params;
+
+  try {
+    const bookings = await getBookingsByUserId(Number(userId));
+    reply.send(bookings);
+  } catch (error) {
+    reply.status(500).send({ error: error.message });
+  }
+}
+
 module.exports = {
   createBookingHandler,
   getAllBookingsHandler,
@@ -172,4 +184,5 @@ module.exports = {
   updateBookingByIdHandler,
   deleteBookingByIdHandler,
   uploadProofOfPaymentHandler,
+  getBookingsByUserIdHandler,
 };
