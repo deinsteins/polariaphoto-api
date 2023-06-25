@@ -167,7 +167,7 @@ async function deleteBookingByIdHandler(request, reply) {
 }
 
 async function getBookingsByUserIdHandler(request, reply) {
-  const { userId } = request.params;
+  const { id: userId } = request.user;
 
   try {
     const bookings = await getBookingsByUserId(Number(userId));

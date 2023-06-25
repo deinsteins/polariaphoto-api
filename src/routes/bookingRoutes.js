@@ -46,13 +46,9 @@ module.exports = function (fastify, opts, done) {
     }
   );
 
-  fastify.get(
-    "/book/user/:userId",
-    { preHandler: authenticate },
-    (request, reply) => {
-      getBookingsByUserIdHandler(request, reply);
-    }
-  );
+  fastify.get("/book/user", { preHandler: authenticate }, (request, reply) => {
+    getBookingsByUserIdHandler(request, reply);
+  });
 
   done();
 };
